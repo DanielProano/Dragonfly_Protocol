@@ -1,5 +1,7 @@
 # Flight Controller Protocol
 
-The protocol header so the ground laptop command 
-line tool, ESP32 bridge, and STM32 Flight Controller
-types can stay in sync with each other.
+The protocol definition here allows the
+flight controller, receiver bridge, and 
+ground station to stay in sync. The common 
+definitions between each other enable
+consistency across the different code repos.
