@@ -25,8 +25,8 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
     int32_t latitude;
     int32_t longitude;
-    float meters_above_sealvl;
-    float meters_above_ground;
+    float altitude_meters_abv_sealvl;
+    float altitude_meters_abv_ground;
     int8_t fix_type;
 } GPS;
 
@@ -39,12 +39,12 @@ typedef struct __attribute__((packed)) {
 
 /* Enums */
 
-typedef enum : uint8_t {
+typedef enum {
     FLIGHT_DISARMED,
     FLIGHT_ARMED,
 } FLIGHT_STATE;
 
-typedef enum : uint8_t { 
+typedef enum { 
     FLIGHT_MANUAL,
     FLIGHT_ACROBATIC,
     FLIGHT_AUTONOMOUS,
@@ -54,7 +54,7 @@ typedef enum : uint8_t {
     FLIGHT_LAND,
 } FLIGHT_MODE;
 
-typedef enum : uint8_t {
+typedef enum {
     BOOTLOADER_NONE,
     BOOTLOADER_STATS,
     BOOTLOADER_ERASE_APP,
@@ -62,7 +62,7 @@ typedef enum : uint8_t {
     BOOTLOADER_VERIFY,
 } BOOTLOADER_CMD;
 
-typedef enum : uint8_t {
+typedef enum {
     ERR_NONE,
     ERR_CRC_FAIL,
     ERR_UNKNOWN_MSG,
@@ -78,11 +78,10 @@ typedef enum : uint8_t {
 
 /* Message IDs  (flattened) */
 
-typedef enum : uint8_t {
+typedef enum {
     MSG_HEARTBEAT,
     MSG_ACK,
     MSG_NACK,
-    MSG_SYS_STATUS,
     MSG_RC_CHANNELS,
     MSG_FLIGHT_STATE,
     MSG_FLIGHT_MODE,
@@ -94,25 +93,28 @@ typedef enum : uint8_t {
     MSG_TELEM_POWER,
     MSG_LOG_STRING,
     MSG_LOG_VALUE,
+
+    MSG_COUNT
 } MSG_ID;
 
 /* Payloads  (one per MSG_ID) */
 
 typedef struct __attribute__((packed)) { 
     uint32_t timestamp; 
-    FLIGHT_STATE state; 
-    FLIGHT_MODE mode; 
-    uint16_t error_flags; 
+    uint16_t error_flags;
+    uint8_t state; 
+    uint8_t mode;  
 } HEARTBEAT_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint8_t acked_seq; 
-    ERROR_CODE error; 
+    uint8_t ack_seq;
+    uint8_t ack_msg_id;
+    uint8_t error; 
 } ACK_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
     uint8_t nacked_seq; 
-    ERROR_CODE error; 
+    uint8_t error; 
 } NACK_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
@@ -122,23 +124,22 @@ typedef struct __attribute__((packed)) {
 } RC_CHANNELS_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    FLIGHT_STATE requested_state; 
+    uint8_t requested_state; 
 } FLIGHT_STATE_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    FLIGHT_MODE requested_mode; 
+    uint8_t requested_mode; 
 } FLIGHT_MODE_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    BOOTLOADER_CMD cmd; 
     uint32_t addr; 
     uint16_t len; 
+    uint8_t cmd; 
     uint8_t nonce[8]; 
 } BOOTLOADER_CMD_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
     uint32_t addr; 
-    uint8_t len; 
     uint8_t data[64]; 
 } BOOTLOADER_DATA_PAYLOAD;
 
@@ -179,11 +180,11 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
     uint8_t start_byte;
     uint8_t version;
-    MSG_ID message_id;
+    uint8_t message_id;
     uint8_t sequence;
     uint8_t payload_len;
     uint8_t payload[PAYLOAD_MAX_SIZE];
-    uint16_t CRC;
+    uint16_t crc;
 } FRAME;
 
 static const uint8_t MSG_PAYLOAD_SIZE[] = {
