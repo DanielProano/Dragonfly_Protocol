@@ -37,6 +37,19 @@ typedef struct __attribute__((packed)) {
     VECTOR magnitude;
 } IMU;
 
+typedef struct __attribute__((packed)) {
+    float pressure_pa; 
+    float temp_c; 
+    float alt_m;
+} BAROMETER;
+
+typedef struct __attribute__((packed)) {
+    float voltage; 
+    float current; 
+    float consumed_mah; 
+    uint8_t percent;
+} POWER;
+
 /* Enums */
 
 typedef enum {
@@ -152,16 +165,11 @@ typedef struct __attribute__((packed)) {
 } TELEM_GPS_PAYLOAD;
 
 typedef struct __attribute__((packed)) {
-    float pressure_pa; 
-    float temp_c; 
-    float alt_m; 
+    BAROMETER barometer;
 } TELEM_BAROMETER_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    float voltage; 
-    float current; 
-    float consumed_mah; 
-    uint8_t percent; 
+    POWER power; 
 } TELEM_POWER_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
