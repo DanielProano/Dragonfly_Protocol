@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x03
+#define PROTOCOL_VERSION    0x04
 #define PAYLOAD_MAX_SIZE    128
+#define PAYLOAD_TEXT_SIZE   120
 
 /* Primitives */
 
@@ -181,7 +182,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct __attribute__((packed)) { 
     uint8_t level; 
-    char text[120]; 
+    char text[PAYLOAD_TEXT_SIZE]; 
 } LOG_STRING_PAYLOAD;
 
 typedef struct __attribute__((packed)) {
@@ -202,7 +203,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct __attribute__((packed)) {
     uint8_t cmd;
-    char text[120];
+    char text[PAYLOAD_TEXT_SIZE];
 } OLED_PAYLOAD;
 
 /* Frame */
