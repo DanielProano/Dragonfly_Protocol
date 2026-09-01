@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x01
+#define PROTOCOL_VERSION    0x02
 #define PAYLOAD_MAX_SIZE    128
 
 /* Primitives */
@@ -106,6 +106,7 @@ typedef enum {
     MSG_TELEM_POWER,
     MSG_LOG_STRING,
     MSG_LOG_VALUE,
+    MSG_ESP32_STATUS,
 
     MSG_COUNT
 } MSG_ID;
@@ -177,11 +178,21 @@ typedef struct __attribute__((packed)) {
     char text[120]; 
 } LOG_STRING_PAYLOAD;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t key_id; 
-    float value; 
-    uint32_t timestamp; 
+typedef struct __attribute__((packed)) {
+    uint8_t key_id;
+    float value;
+    uint32_t timestamp;
 } LOG_VALUE_PAYLOAD;
+
+typedef struct __attribute__((packed)) {
+    uint32_t uptime_ms;
+    uint32_t free_heap_bytes;
+    uint32_t stm32_last_frame_age_ms;
+    uint32_t stm32_frames_ok;
+    uint32_t stm32_frames_err;
+    uint8_t  stm32_link_up;
+    uint8_t  wifi_client_count;
+} ESP32_STATUS_PAYLOAD;
 
 /* Frame */
 
@@ -210,6 +221,7 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_TELEM_POWER]      = sizeof(TELEM_POWER_PAYLOAD),
     [MSG_LOG_STRING]       = sizeof(LOG_STRING_PAYLOAD),
     [MSG_LOG_VALUE]        = sizeof(LOG_VALUE_PAYLOAD),
+    [MSG_ESP32_STATUS]     = sizeof(ESP32_STATUS_PAYLOAD),
 };
 
 #endif
