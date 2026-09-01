@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x02
+#define PROTOCOL_VERSION    0x03
 #define PAYLOAD_MAX_SIZE    128
 
 /* Primitives */
@@ -89,6 +89,11 @@ typedef enum {
     PROTO_ERR_TIMEOUT,
 } ERROR_CODE;
 
+typedef enum {
+    OLED_PRINT,
+    OLED_CLEAR,
+} OLED_CMD;
+
 /* Message IDs  (flattened) */
 
 typedef enum {
@@ -107,6 +112,7 @@ typedef enum {
     MSG_LOG_STRING,
     MSG_LOG_VALUE,
     MSG_ESP32_STATUS,
+    MSG_OLED,
 
     MSG_COUNT
 } MSG_ID;
@@ -194,6 +200,11 @@ typedef struct __attribute__((packed)) {
     uint8_t  wifi_client_count;
 } ESP32_STATUS_PAYLOAD;
 
+typedef struct __attribute__((packed)) {
+    uint8_t cmd;
+    char text[120];
+} OLED_PAYLOAD;
+
 /* Frame */
 
 typedef struct __attribute__((packed)) {
@@ -222,6 +233,7 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_LOG_STRING]       = sizeof(LOG_STRING_PAYLOAD),
     [MSG_LOG_VALUE]        = sizeof(LOG_VALUE_PAYLOAD),
     [MSG_ESP32_STATUS]     = sizeof(ESP32_STATUS_PAYLOAD),
+    [MSG_OLED]             = sizeof(OLED_PAYLOAD),
 };
 
 #endif
