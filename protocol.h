@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x04
+#define PROTOCOL_VERSION    0x06
 #define PAYLOAD_MAX_SIZE    128
 #define PAYLOAD_TEXT_SIZE   120
 
@@ -39,15 +39,15 @@ typedef struct __attribute__((packed)) {
 } IMU;
 
 typedef struct __attribute__((packed)) {
-    float pressure_pa; 
-    float temp_c; 
-    float alt_m;
+    float pressure_pascal;
+    float temperature_celsius;
+    float altitude_meters;
 } BAROMETER;
 
 typedef struct __attribute__((packed)) {
-    float voltage; 
-    float current; 
-    float consumed_mah; 
+    float voltage_volts;
+    float current_amps;
+    float consumed_milliamp_hours;
     uint8_t percent;
 } POWER;
 
@@ -77,23 +77,37 @@ typedef enum {
 } BOOTLOADER_CMD;
 
 typedef enum {
-    PROTO_ERR_NONE,
-    PROTO_ERR_CRC_FAIL,
-    PROTO_ERR_UNKNOWN_MSG,
-    PROTO_ERR_WRONG_VERSION,
-    PROTO_ERR_PAYLOAD_OVERSIZE,
-    PROTO_ERR_INVALID_STATE,
-    PROTO_ERR_BUFFER_FULL,
-    PROTO_ERR_AUTH_FAIL,
-    PROTO_ERR_FLASH_FAIL,
-    PROTO_ERR_SENSOR_FAIL,
-    PROTO_ERR_TIMEOUT,
+    ERROR_NONE,
+    ERROR_CRC_FAIL,
+    ERROR_UNKNOWN_MSG,
+    ERROR_WRONG_VERSION,
+    ERROR_PAYLOAD_OVERSIZE,
+    ERROR_INVALID_STATE,
+    ERROR_BUFFER_FULL,
+    ERROR_AUTH_FAIL,
+    ERROR_FLASH_FAIL,
+    ERROR_SENSOR_FAIL,
+    ERROR_TIMEOUT,
 } ERROR_CODE;
 
 typedef enum {
     OLED_PRINT,
     OLED_CLEAR,
 } OLED_CMD;
+
+typedef enum {
+    BATTERY,
+    FLIGHT_CONTROLLER,
+    BOOTLOADER, 
+    RTOS,
+    MOTOR_CONTROLLER,
+    MOTORS,
+    CAMERA,
+    BARAMETER,
+    GYROSCOPE,
+    COMMS,
+    GENERIC,
+} CATEGORY;
 
 /* Message IDs  (flattened) */
 
@@ -106,6 +120,7 @@ typedef enum {
     MSG_FLIGHT_MODE,
     MSG_BOOTLOADER_CMD,
     MSG_BOOTLOADER_DATA,
+    MSG_BOOTLOADER_STATS,
     MSG_TELEM_IMU,
     MSG_TELEM_GPS,
     MSG_TELEM_BAROMETER,
@@ -128,48 +143,52 @@ typedef struct __attribute__((packed)) {
 } HEARTBEAT_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint8_t ack_seq;
-    uint8_t ack_msg_id;
-    uint8_t error; 
+    uint8_t ack_seq; 
 } ACK_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
     uint8_t nacked_seq; 
-    uint8_t error; 
+    uint8_t error;
 } NACK_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint32_t timestamp; 
-    int16_t channels[16]; 
-    uint16_t valid_mask; 
+    int16_t channels[16];  
 } RC_CHANNELS_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint8_t requested_state; 
+    uint8_t state; 
 } FLIGHT_STATE_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint8_t requested_mode; 
+    uint8_t mode; 
 } FLIGHT_MODE_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
     uint32_t addr; 
     uint16_t len; 
-    uint8_t cmd; 
-    uint8_t nonce[8]; 
+    uint8_t cmd;  
+    uint8_t signature[64];
 } BOOTLOADER_CMD_PAYLOAD;
 
 typedef struct __attribute__((packed)) { 
-    uint32_t addr; 
+    uint32_t addr;
     uint8_t data[64]; 
 } BOOTLOADER_DATA_PAYLOAD;
 
-typedef struct __attribute__((packed)) { 
-    IMU imu; 
+typedef struct __attribute__((packed)) {
+    uint32_t cur_counter;
+    uint32_t bank_a_version;
+    uint32_t bank_b_version;
+    uint8_t active_bank;
+    uint8_t last_update_result;
+} BOOTLOADER_STATS_PAYLOAD;
+
+typedef struct __attribute__((packed)) {
+    IMU imu;
 } TELEM_IMU_PAYLOAD;
 
-typedef struct __attribute__((packed)) { 
-    GPS gps; 
+typedef struct __attribute__((packed)) {
+    GPS gps;
 } TELEM_GPS_PAYLOAD;
 
 typedef struct __attribute__((packed)) {
@@ -180,8 +199,7 @@ typedef struct __attribute__((packed)) {
     POWER power; 
 } TELEM_POWER_PAYLOAD;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t level; 
+typedef struct __attribute__((packed)) {  
     char text[PAYLOAD_TEXT_SIZE]; 
 } LOG_STRING_PAYLOAD;
 
