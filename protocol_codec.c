@@ -7,9 +7,9 @@
 #define TOTAL_HEADER_BYTE_SIZE 5
 
 /*
- *  Encode a provided FRAME struct into bytes in the buffer
+ *  Encode a provided frame struct into bytes in the buffer
  */
-int protocol_frame_encode(uint8_t *buffer, size_t buf_size, const FRAME *frame) {
+int protocol_frame_encode(uint8_t *buffer, size_t buf_size, const frame *frame) {
     size_t total_len = TOTAL_HEADER_BYTE_SIZE + frame->payload_len + sizeof(uint16_t);
 
     if (total_len > buf_size)
@@ -34,7 +34,7 @@ int protocol_frame_encode(uint8_t *buffer, size_t buf_size, const FRAME *frame) 
     return (int) total_len;
 }
 
-int protocol_frame_decode(FRAME *frame, const uint8_t *buffer, size_t buf_size) {
+int protocol_frame_decode(frame *frame, const uint8_t *buffer, size_t buf_size) {
 
     if (buf_size < (TOTAL_HEADER_BYTE_SIZE + sizeof(uint16_t)))
         return -1;
