@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x08
+#define PROTOCOL_VERSION    0x09
 #define PAYLOAD_MAX_SIZE    128
 #define PAYLOAD_TEXT_SIZE   120
 
@@ -127,11 +127,11 @@ typedef enum {
     MSG_TELEM_GPS,
     MSG_TELEM_BAROMETER,
     MSG_TELEM_POWER,
+    MSG_TELEM_LIDAR,
     MSG_LOG_STRING,
     MSG_LOG_VALUE,
     MSG_ESP32_STATUS,
     MSG_OLED,
-    MSG_LIDAR,
 
     MSG_COUNT
 } msg_id;
@@ -203,6 +203,12 @@ typedef struct __attribute__((packed)) {
 } telem_power_payload;
 
 typedef struct __attribute__((packed)) {
+    uint16_t distance;
+    uint16_t amp_strength;
+    uint16_t temperature;
+} telem_lidar_payload;
+
+typedef struct __attribute__((packed)) {
     char text[PAYLOAD_TEXT_SIZE];
 } log_string_payload;
 
@@ -226,12 +232,6 @@ typedef struct __attribute__((packed)) {
     uint8_t cmd;
     char text[PAYLOAD_TEXT_SIZE];
 } oled_payload;
-
-typedef struct __attribute__((packed)) {
-    uint16_t distance;
-    uint16_t amp_strength;
-    uint16_t temperature;
-} lidar_payload;
 
 /* Frame */
 
@@ -259,11 +259,11 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_TELEM_GPS]        = sizeof(telem_gps_payload),
     [MSG_TELEM_BAROMETER]  = sizeof(telem_barometer_payload),
     [MSG_TELEM_POWER]      = sizeof(telem_power_payload),
+    [MSG_TELEM_LIDAR]      = sizeof(lidar_payload),
     [MSG_LOG_STRING]       = sizeof(log_string_payload),
     [MSG_LOG_VALUE]        = sizeof(log_value_payload),
     [MSG_ESP32_STATUS]     = sizeof(esp32_status_payload),
     [MSG_OLED]             = sizeof(oled_payload),
-    [MSG_LIDAR]            = sizeof(lidar_payload),
 };
 
 #endif
