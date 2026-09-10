@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x07
+#define PROTOCOL_VERSION    0x08
 #define PAYLOAD_MAX_SIZE    128
 #define PAYLOAD_TEXT_SIZE   120
 
@@ -14,14 +14,14 @@ typedef struct __attribute__((packed)) {
     float x;
     float y;
     float z;
-} VECTOR;
+} vector;
 
 typedef struct __attribute__((packed)) {
     float w;
     float i;
     float j;
     float k;
-} QUATERNION;
+} quaternion;
 
 typedef struct __attribute__((packed)) {
     int32_t latitude;
@@ -29,36 +29,36 @@ typedef struct __attribute__((packed)) {
     float altitude_meters_abv_sealvl;
     float altitude_meters_abv_ground;
     int8_t fix_type;
-} GPS;
+} gps;
 
 typedef struct __attribute__((packed)) {
     uint32_t timestamp;
-    VECTOR acceleration;
-    VECTOR gyro;
-    VECTOR magnitude;
-} IMU;
+    vector acceleration;
+    vector gyro;
+    vector magnitude;
+} imu;
 
 typedef struct __attribute__((packed)) {
     float pressure_pascal;
     float temperature_celsius;
     float altitude_meters;
-} BAROMETER;
+} barometer;
 
 typedef struct __attribute__((packed)) {
     float voltage_volts;
     float current_amps;
     float consumed_milliamp_hours;
     uint8_t percent;
-} POWER;
+} power;
 
 /* Enums */
 
 typedef enum {
     FLIGHT_DISARMED,
     FLIGHT_ARMED,
-} FLIGHT_STATE;
+} flight_state;
 
-typedef enum { 
+typedef enum {
     FLIGHT_MANUAL,
     FLIGHT_ACROBATIC,
     FLIGHT_AUTONOMOUS,
@@ -66,7 +66,7 @@ typedef enum {
     FLIGHT_MISSION,
     FLIGHT_RETURN_TO_LAUNCH,
     FLIGHT_LAND,
-} FLIGHT_MODE;
+} flight_mode;
 
 typedef enum {
     BOOTLOADER_NONE,
@@ -74,7 +74,7 @@ typedef enum {
     BOOTLOADER_ERASE_APP,
     BOOTLOADER_UPDATE,
     BOOTLOADER_VERIFY,
-} BOOTLOADER_CMD;
+} bootloader_cmd;
 
 typedef enum {
     ERROR_NONE,
@@ -88,17 +88,17 @@ typedef enum {
     ERROR_FLASH_FAIL,
     ERROR_SENSOR_FAIL,
     ERROR_TIMEOUT,
-} ERROR_CODE;
+} error_code;
 
 typedef enum {
     OLED_PRINT,
     OLED_CLEAR,
-} OLED_CMD;
+} oled_cmd;
 
 typedef enum {
     BATTERY,
     FLIGHT_CONTROLLER,
-    BOOTLOADER, 
+    BOOTLOADER,
     RTOS,
     MOTOR_CONTROLLER,
     MOTORS,
@@ -106,8 +106,9 @@ typedef enum {
     BARAMETER,
     GYROSCOPE,
     COMMS,
+    LIDAR,
     GENERIC,
-} CATEGORY;
+} category;
 
 /* Message IDs  (flattened) */
 
@@ -130,51 +131,52 @@ typedef enum {
     MSG_LOG_VALUE,
     MSG_ESP32_STATUS,
     MSG_OLED,
+    MSG_LIDAR,
 
     MSG_COUNT
-} MSG_ID;
+} msg_id;
 
 /* Payloads  (one per MSG_ID) */
 
-typedef struct __attribute__((packed)) { 
-    uint32_t timestamp; 
+typedef struct __attribute__((packed)) {
+    uint32_t timestamp;
     uint16_t error_flags;
-    uint8_t state; 
-    uint8_t mode;  
-} HEARTBEAT_PAYLOAD;
+    uint8_t state;
+    uint8_t mode;
+} heartbeat_payload;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t ack_seq; 
-} ACK_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    uint8_t ack_seq;
+} ack_payload;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t nacked_seq; 
+typedef struct __attribute__((packed)) {
+    uint8_t nacked_seq;
     uint8_t error;
-} NACK_PAYLOAD;
+} nack_payload;
 
-typedef struct __attribute__((packed)) { 
-    int16_t channels[16];  
-} RC_CHANNELS_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    int16_t channels[16];
+} rc_channels_payload;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t state; 
-} FLIGHT_STATE_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    uint8_t state;
+} flight_state_payload;
 
-typedef struct __attribute__((packed)) { 
-    uint8_t mode; 
-} FLIGHT_MODE_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    uint8_t mode;
+} flight_mode_payload;
 
-typedef struct __attribute__((packed)) { 
-    uint32_t addr; 
-    uint16_t len; 
-    uint8_t cmd;  
-    uint8_t signature[64];
-} BOOTLOADER_CMD_PAYLOAD;
-
-typedef struct __attribute__((packed)) { 
+typedef struct __attribute__((packed)) {
     uint32_t addr;
-    uint8_t data[64]; 
-} BOOTLOADER_DATA_PAYLOAD;
+    uint16_t len;
+    uint8_t cmd;
+    uint8_t signature[64];
+} bootloader_cmd_payload;
+
+typedef struct __attribute__((packed)) {
+    uint32_t addr;
+    uint8_t data[64];
+} bootloader_data_payload;
 
 typedef struct __attribute__((packed)) {
     uint32_t cur_counter;
@@ -182,33 +184,33 @@ typedef struct __attribute__((packed)) {
     uint32_t bank_b_version;
     uint8_t active_bank;
     uint8_t last_update_result;
-} BOOTLOADER_STATS_PAYLOAD;
+} bootloader_stats_payload;
 
 typedef struct __attribute__((packed)) {
-    IMU imu;
-} TELEM_IMU_PAYLOAD;
+    imu imu;
+} telem_imu_payload;
 
 typedef struct __attribute__((packed)) {
-    GPS gps;
-} TELEM_GPS_PAYLOAD;
+    gps gps;
+} telem_gps_payload;
 
 typedef struct __attribute__((packed)) {
-    BAROMETER barometer;
-} TELEM_BAROMETER_PAYLOAD;
+    barometer barometer;
+} telem_barometer_payload;
 
-typedef struct __attribute__((packed)) { 
-    POWER power; 
-} TELEM_POWER_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    power power;
+} telem_power_payload;
 
-typedef struct __attribute__((packed)) {  
-    char text[PAYLOAD_TEXT_SIZE]; 
-} LOG_STRING_PAYLOAD;
+typedef struct __attribute__((packed)) {
+    char text[PAYLOAD_TEXT_SIZE];
+} log_string_payload;
 
 typedef struct __attribute__((packed)) {
     uint8_t key_id;
     float value;
     uint32_t timestamp;
-} LOG_VALUE_PAYLOAD;
+} log_value_payload;
 
 typedef struct __attribute__((packed)) {
     uint32_t uptime_ms;
@@ -218,12 +220,18 @@ typedef struct __attribute__((packed)) {
     uint32_t stm32_frames_err;
     uint8_t  stm32_link_up;
     uint8_t  wifi_client_count;
-} ESP32_STATUS_PAYLOAD;
+} esp32_status_payload;
 
 typedef struct __attribute__((packed)) {
     uint8_t cmd;
     char text[PAYLOAD_TEXT_SIZE];
-} OLED_PAYLOAD;
+} oled_payload;
+
+typedef struct __attribute__((packed)) {
+    uint16_t distance;
+    uint16_t amp_strength;
+    uint16_t temperature;
+} lidar_payload;
 
 /* Frame */
 
@@ -235,26 +243,27 @@ typedef struct __attribute__((packed)) {
     uint8_t payload_len;
     uint8_t payload[PAYLOAD_MAX_SIZE];
     uint16_t crc;
-} FRAME;
+} frame;
 
 static const uint8_t MSG_PAYLOAD_SIZE[] = {
-    [MSG_HEARTBEAT]        = sizeof(HEARTBEAT_PAYLOAD),
-    [MSG_ACK]              = sizeof(ACK_PAYLOAD),
-    [MSG_NACK]             = sizeof(NACK_PAYLOAD),
-    [MSG_RC_CHANNELS]      = sizeof(RC_CHANNELS_PAYLOAD),
-    [MSG_FLIGHT_STATE]     = sizeof(FLIGHT_STATE_PAYLOAD),
-    [MSG_FLIGHT_MODE]      = sizeof(FLIGHT_MODE_PAYLOAD),
-    [MSG_BOOTLOADER_CMD]   = sizeof(BOOTLOADER_CMD_PAYLOAD),
-    [MSG_BOOTLOADER_DATA]  = sizeof(BOOTLOADER_DATA_PAYLOAD),
-    [MSG_BOOTLOADER_STATS] = sizeof(BOOTLOADER_STATS_PAYLOAD),
-    [MSG_TELEM_IMU]        = sizeof(TELEM_IMU_PAYLOAD),
-    [MSG_TELEM_GPS]        = sizeof(TELEM_GPS_PAYLOAD),
-    [MSG_TELEM_BAROMETER]  = sizeof(TELEM_BAROMETER_PAYLOAD),
-    [MSG_TELEM_POWER]      = sizeof(TELEM_POWER_PAYLOAD),
-    [MSG_LOG_STRING]       = sizeof(LOG_STRING_PAYLOAD),
-    [MSG_LOG_VALUE]        = sizeof(LOG_VALUE_PAYLOAD),
-    [MSG_ESP32_STATUS]     = sizeof(ESP32_STATUS_PAYLOAD),
-    [MSG_OLED]             = sizeof(OLED_PAYLOAD),
+    [MSG_HEARTBEAT]        = sizeof(heartbeat_payload),
+    [MSG_ACK]              = sizeof(ack_payload),
+    [MSG_NACK]             = sizeof(nack_payload),
+    [MSG_RC_CHANNELS]      = sizeof(rc_channels_payload),
+    [MSG_FLIGHT_STATE]     = sizeof(flight_state_payload),
+    [MSG_FLIGHT_MODE]      = sizeof(flight_mode_payload),
+    [MSG_BOOTLOADER_CMD]   = sizeof(bootloader_cmd_payload),
+    [MSG_BOOTLOADER_DATA]  = sizeof(bootloader_data_payload),
+    [MSG_BOOTLOADER_STATS] = sizeof(bootloader_stats_payload),
+    [MSG_TELEM_IMU]        = sizeof(telem_imu_payload),
+    [MSG_TELEM_GPS]        = sizeof(telem_gps_payload),
+    [MSG_TELEM_BAROMETER]  = sizeof(telem_barometer_payload),
+    [MSG_TELEM_POWER]      = sizeof(telem_power_payload),
+    [MSG_LOG_STRING]       = sizeof(log_string_payload),
+    [MSG_LOG_VALUE]        = sizeof(log_value_payload),
+    [MSG_ESP32_STATUS]     = sizeof(esp32_status_payload),
+    [MSG_OLED]             = sizeof(oled_payload),
+    [MSG_LIDAR]            = sizeof(lidar_payload),
 };
 
 #endif
