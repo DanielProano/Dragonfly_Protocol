@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x09
+#define PROTOCOL_VERSION    0x0A
 #define PAYLOAD_MAX_SIZE    128
 #define PAYLOAD_TEXT_SIZE   120
 
@@ -259,7 +259,7 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_TELEM_GPS]        = sizeof(telem_gps_payload),
     [MSG_TELEM_BAROMETER]  = sizeof(telem_barometer_payload),
     [MSG_TELEM_POWER]      = sizeof(telem_power_payload),
-    [MSG_TELEM_LIDAR]      = sizeof(lidar_payload),
+    [MSG_TELEM_LIDAR]      = sizeof(telem_lidar_payload),
     [MSG_LOG_STRING]       = sizeof(log_string_payload),
     [MSG_LOG_VALUE]        = sizeof(log_value_payload),
     [MSG_ESP32_STATUS]     = sizeof(esp32_status_payload),
