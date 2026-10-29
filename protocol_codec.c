@@ -47,7 +47,7 @@ int protocol_frame_decode(frame *frame, const uint8_t *buffer, size_t buf_size) 
     if (payload_len > PAYLOAD_MAX_SIZE)
         return -1;
 
-    int total_size = TOTAL_HEADER_BYTE_SIZE + payload_len + sizeof(uint16_t);
+    size_t total_size = TOTAL_HEADER_BYTE_SIZE + payload_len + sizeof(uint16_t);
 
     if (buf_size < total_size)
         return -1;
