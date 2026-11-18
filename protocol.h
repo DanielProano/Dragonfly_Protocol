@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define PROTOCOL_START_BYTE 0xAA
-#define PROTOCOL_VERSION    0x0A
+#define PROTOCOL_VERSION    0x0B
 #define PAYLOAD_MAX_SIZE    128
 #define PAYLOAD_TEXT_SIZE   120
 
