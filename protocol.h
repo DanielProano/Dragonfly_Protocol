@@ -69,7 +69,6 @@ typedef enum {
 } flight_mode;
 
 typedef enum {
-    BOOTLOADER_NONE,
     BOOTLOADER_STATS,
     BOOTLOADER_ERASE_APP,
     BOOTLOADER_UPDATE,
@@ -95,21 +94,6 @@ typedef enum {
     OLED_CLEAR,
 } oled_cmd;
 
-typedef enum {
-    BATTERY,
-    FLIGHT_CONTROLLER,
-    BOOTLOADER,
-    RTOS,
-    MOTOR_CONTROLLER,
-    MOTORS,
-    CAMERA,
-    BARAMETER,
-    GYROSCOPE,
-    COMMS,
-    LIDAR,
-    GENERIC,
-} category;
-
 /* Message IDs  (flattened) */
 
 typedef enum {
@@ -121,8 +105,6 @@ typedef enum {
     MSG_FLIGHT_MODE,
     MSG_BOOTLOADER_CMD,
     MSG_BOOTLOADER_DATA,
-    MSG_BOOTLOADER_STATS,
-    MSG_BOOTLOADER_VERIFY,
     MSG_TELEM_IMU,
     MSG_TELEM_GPS,
     MSG_TELEM_BAROMETER,
@@ -169,7 +151,7 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
     uint32_t addr;
     uint16_t len;
-    uint8_t cmd;
+    bootloader_cmd cmd;
     uint8_t signature[64];
 } bootloader_cmd_payload;
 
