@@ -236,7 +236,6 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_FLIGHT_MODE]      = sizeof(flight_mode_payload),
     [MSG_BOOTLOADER_CMD]   = sizeof(bootloader_cmd_payload),
     [MSG_BOOTLOADER_DATA]  = sizeof(bootloader_data_payload),
-    [MSG_BOOTLOADER_STATS] = sizeof(bootloader_stats_payload),
     [MSG_TELEM_IMU]        = sizeof(telem_imu_payload),
     [MSG_TELEM_GPS]        = sizeof(telem_gps_payload),
     [MSG_TELEM_BAROMETER]  = sizeof(telem_barometer_payload),
