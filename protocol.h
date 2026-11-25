@@ -114,6 +114,7 @@ typedef enum {
     MSG_LOG_VALUE,
     MSG_ESP32_STATUS,
     MSG_OLED,
+    MSG_MOTOR_THROTTLE,
 
     MSG_COUNT
 } msg_id;
@@ -215,6 +216,10 @@ typedef struct __attribute__((packed)) {
     char text[PAYLOAD_TEXT_SIZE];
 } oled_payload;
 
+typedef struct __attribute__((packed)) {
+    uint8_t percent[4];
+} motor_throttle_payload;
+
 /* Frame */
 
 typedef struct __attribute__((packed)) {
@@ -245,6 +250,7 @@ static const uint8_t MSG_PAYLOAD_SIZE[] = {
     [MSG_LOG_VALUE]        = sizeof(log_value_payload),
     [MSG_ESP32_STATUS]     = sizeof(esp32_status_payload),
     [MSG_OLED]             = sizeof(oled_payload),
+    [MSG_MOTOR_THROTTLE]   = sizeof(motor_throttle_payload),
 };
 
 #endif
